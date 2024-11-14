@@ -1,42 +1,58 @@
 import { ApiError } from "../../../utils/ApiError.js";
-
 import ProductRepository from "../repository/product.repository.js";
-import {ProductCategory} from "../index.js";
+import {ProductCategory,ProductImages} from "../index.js";
+import { uploadToCloudinary } from "../../../config/multer.js";
+import { CategoryModel } from "../../dbrelation.js";
 const productRepository = new ProductRepository(); 
 
 class ProductService {
-    // Create a new product
-    async createProduct(data) {
+
+    async createProduct(data,images) {
         try {
-            // Step 1: Create the product
+       
             const createdProduct = await productRepository.create(data);
-            console.log('Created Product:', createdProduct);
 
             if (!createdProduct.id) {
                 throw new ApiError(400, 'Product creation failed, no ID returned.');
             }
-            // Step 2: Associate categories with the created product
+         
             if (data.categories && data.categories.length > 0) {
                 const categoryAssociations = data.categories.map((categoryId) => ({
-                    productId: createdProduct.id, // Ensure the productId is assigned
+                    productId: createdProduct.id, 
                     categoryId,
                 }));
-                console.log('Category Associations:', categoryAssociations);
-                // Insert into ProductCategories table
+              
                 await ProductCategory.bulkCreate(categoryAssociations);
             }
+            const uploadedImages = [];
+            for (const image of images) {
+                const uploadResult = await uploadToCloudinary(image, 'product_images');
 
-            return createdProduct;
+            
+                const newImage = await ProductImages.create({
+                    productId: createdProduct.id,
+                    cloudinaryId: uploadResult.public_id,
+                    url: uploadResult.secure_url,
+                });
+
+                uploadedImages.push(newImage);
+            }
+                createdProduct.images = uploadedImages;
+            return { product: createdProduct,images:uploadedImages}
         } catch (error) {
-            console.log(error)
+            console.log("error dor service",error)
             throw new ApiError(400, 'Error creating product', error.errors);
         }
     }
 
-    // Get product by ID
     async getProductById(id) {
         try {
-            const product = await productRepository.findById(id);
+            const product = await productRepository.findById(id, {
+                include: [
+                    { model: ProductImages, as: 'images' }, 
+                    { model: CategoryModel,  as: 'categories' } 
+                ]
+            });
             if (!product) {
                 throw new ApiError(404, 'Product not found');
             }
@@ -49,7 +65,12 @@ class ProductService {
     // Get all products
     async getAllProducts() {
         try {
-            const products = await productRepository.findAll();
+            const products = await productRepository.findAll({
+                include: [
+                    { model: ProductImages, as: 'images' }, 
+                    { model: CategoryModel,  as: 'categories' } 
+                ]
+            });
             return products;
         } catch (error) {
             throw new ApiError(400, 'Error fetching products', error.errors);

@@ -6,7 +6,7 @@ import userService from "../service/user.service.js";
 
 const userRegister = asyncHandler(async(req,res,next)=>{
     try {
-        const { name, email, password, account_type} = req.body;
+        const { name, email, password, account_type="User"} = req.body;
         const data = { name, email, password,account_type};
         if(!name|| !email || !password){
             throw new ApiError(400,"all Fields are required")
@@ -14,7 +14,8 @@ const userRegister = asyncHandler(async(req,res,next)=>{
         const result = await userService.registerUser(data);
         res.status(201).json(new ApiResponse(201,"user is created",result));
     } catch (error) {
-        next( new ApiError(400, error.message|| "Error while Register the user", error));
+        // console.log("Error Form register api",error)
+        next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Register the user","From Controler layer", error.errors || error));
     }
 })
 
@@ -27,7 +28,7 @@ const userlogin = asyncHandler(async(req,res,next)=>{
         const result = await userService.loginUser(email, password,res);
         res.status(200).json(new ApiResponse(201,"user Login Successful",result));
     } catch (error) {
-        next( new ApiError(400, error.message|| "Error while Login the user"));
+        next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Login the user","From Controler layer", error.errors || error));
     }
 })
 
@@ -39,7 +40,7 @@ const updateUser = asyncHandler(async(req,res,next)=>{
         res.status(200).json(new ApiResponse(201,"user Update Successful",result));
     } catch (error) {
         console.log(error)
-        next( new ApiError(400, error.message|| "Error while Updating the user"));
+        next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Updating the user","From Controler layer", error.errors || error));
     }
 })
 
@@ -49,9 +50,19 @@ const deleteUser = asyncHandler(async(req,res,next)=>{
         const result = await userService.deleteUser(id);
         res.status(200).json(new ApiResponse(201,"user delete Successful",result));
     } catch (error) {
-        next( new ApiError(400, error.message|| "Error while Deleting the user",error));
+        next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Deleting the user","From Controler layer", error.errors || error));
     }
 })
+
+const Logout = asyncHandler(async(req,res,next)=>{
+    try {
+       
+        res.status(200).json(new ApiResponse(201,"user delete Successful",result));
+    } catch (error) {
+        next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Deleting the user","From Controler layer", error.errors || error));
+    }
+})
+
 
 export {userRegister,deleteUser,updateUser,userlogin}
 

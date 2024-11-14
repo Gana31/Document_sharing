@@ -12,7 +12,7 @@ const ProductCategory = sequelize.define('ProductCategory', {
         allowNull: false,
       },
     productId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: ProductModel,

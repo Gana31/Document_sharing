@@ -1,4 +1,4 @@
-// utils/tokenUtils.js
+
 import jwt from "jsonwebtoken";
 import ServerConfig from "../config/ServerConfig.js";
 
@@ -26,7 +26,7 @@ export const generateTokensAndSetCookies = (user1, res) => {
     httpOnly: true,
     maxAge: parseDuration(ServerConfig.REFRESH_TOKEN_EXPIRY) || 7 * 24 * 60 * 60 * 1000, // Default to 7 days
   });
-  return {user1,accessToken,refreshToken} 
+  return {user1,accessToken} 
 };
 
 

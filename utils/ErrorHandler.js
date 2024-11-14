@@ -6,6 +6,7 @@ const ErrorHandler = (err, req, res, next) => {
         success: err.success,
         message: err.message,
         data: err.data,
+        layer: err.layer,
         errors: err.errors,
       });
     }

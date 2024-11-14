@@ -6,9 +6,13 @@ class ProductController {
 
     createProduct = asyncHandler(async (req, res) => {
         try {
-            const product = await ProductService.createProduct(req.body);
-            res.status(201).json(new ApiResponse(201, 'Product created successfully', product));
+            console.log('Request received:', req.body);
+            console.log('Uploaded files:', req.files);
+            const{body,files} = req;
+            const  { product ,images} = await ProductService.createProduct(body,files);
+            res.status(201).json(new ApiResponse(201, 'Product created successfully', [product,images]));
         } catch (error) {
+            // console.log(error)
             throw new ApiError(400, error.message || 'Error creating product');
         }
     });

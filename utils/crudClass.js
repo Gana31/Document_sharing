@@ -10,23 +10,25 @@ class CrudRepository {
             const createdRecord = await this.model.create(data);
             return createdRecord;
         } catch (error) {
-            console.log("form the curdrepostioty",error)
-            throw new ApiError(400, 'Error creating record', error);
+            // console.log("from the curdddd",errrr)
+            // console.log("form the curdrepostioty",error.errors[0].message)
+            throw new ApiError(400, error.errors[0].message ||  error.message  || 'Error creating record',"From Base Layer",error.errors || error);
         }
     }
 
-    async findById(id) {
+    async findById(id,options = {}) {
         try {
-            const record = await this.model.findByPk(id);
+            const record = await this.model.findByPk(id,options);
             return record;
         } catch (error) {
-            throw new ApiError(400, 'Error fetching record', error.errors);
+            console.log(error)
+            throw new ApiError(400, error.errors.message ||  error.message  || 'Error fetching record', error.errors);
         }
     }
 
-    async findAll() {
+    async findAll(options = {}) {
         try {
-            const records = await this.model.findAll();
+            const records = await this.model.findAll(options);
             return records;
         } catch (error) {
             throw new ApiError(400, 'Error fetching records', error.errors);

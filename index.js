@@ -11,12 +11,14 @@ const app = express();
 const PORT = ServerConfig.PORT || 8082;
 
 app.use(express.json());
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin:"*",
+    origin: "http://localhost:5173",
     methods:["GET","POST","DELETE","UPDATE","PUT","PATCH"],
     credentials: true,
   }));
+app.use(cookieParser());
+
 app.use("/api/v1", UserRouter,CategoryRouter,ProductRouter);
 
 app.get("/", (req, res) => {

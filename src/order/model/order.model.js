@@ -2,30 +2,15 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../../../config/databaseconfig.js';
 import UserModel from '../../users/model/user.model.js';
 
-const ProductModel = sequelize.define('Product', {
+
+const OrderModel = sequelize.define('Order', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false,
   },
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  price: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  stock: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  createdBy: {
+  userId: {
     type: DataTypes.UUID,
     allowNull: false,
     references: {
@@ -33,23 +18,17 @@ const ProductModel = sequelize.define('Product', {
       key: 'id'
     }
   },
-  rating: {
+  totalPrice: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
   },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  createdAt: {
+  orderDate: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
-  },
+  }
 }, {
-  tableName: 'products',
+  tableName: 'orders',
   timestamps: true,
 });
 
-
-
-export default ProductModel;
+export default OrderModel;

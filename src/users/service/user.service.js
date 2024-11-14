@@ -12,16 +12,17 @@ class UserService {
             const existingUser = await userRepository.findByEmail(email);
             if(existingUser){
                 if(existingUser.isActive == false){
-                    throw new ApiError(400, `user is Already register but did not verify`);
+                    throw new ApiError(400, `user is Already register but did not verify`,'Service Layer');
                 }
-                throw new ApiError(400, `user is Already register please Login the user`);  
+                throw new ApiError(400, `user is Already register please Login the user`,'Service Layer');  
             }
             const user = await userRepository.create(data);
             const token = user.getJWTToken();
             return { user, token };
         } catch (error) {
             // console.log("from service layer",error)
-            throw new ApiError(400, error.message || 'Error registering user form service layer', 'Error registering user form service layer');
+            // throw error
+            throw new ApiError(400, error.errors[0]?.message ||  error.message || 'Error registering user form service layer','Service Layer',error.errors || error);
         }
     }
 
@@ -37,12 +38,12 @@ class UserService {
         if (!isMatch) {
             throw new ApiError(401,'Invalid credentials' );
           }
-        const{user1,accessToken,refreshToken} =generateTokensAndSetCookies(user, res);
+        const{user1,accessToken} =generateTokensAndSetCookies(user, res);
 
-        return { user1, accessToken,refreshToken};
+        return { user1, accessToken};
         } catch (error) {
-            console.log(error)
-            throw new ApiError(400, error.message || 'Error Login user form service layer', 'Error Login user form service layer');
+            // console.log(error)
+            throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error Login user', 'Error Login user form service layer',error.errors || error);
         }
     }
 
@@ -62,7 +63,7 @@ class UserService {
             return updatedUser;
         } catch (error) {
             console.log(error)
-            throw new ApiError(400, 'Error updating user', error.errors);
+            throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error updating user',"from service Layer" ,error.errors || error);
         }
     }
 
@@ -71,7 +72,7 @@ class UserService {
             const response = await userRepository.delete(id);
             return response;
         } catch (error) {
-            throw new ApiError(400, 'Error deleting user', error.errors);
+            throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error deleting user', "from the servie layer",error.errors || error );
         }
     }
 }

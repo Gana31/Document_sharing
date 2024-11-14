@@ -5,6 +5,12 @@ import ServerConfig from './ServerConfig.js';
 const sequelize = new Sequelize(ServerConfig.DB_NAME, ServerConfig.DB_USER, ServerConfig.DB_PASSWORD, {
     host: ServerConfig.DB_HOST,
     dialect: 'postgres',
+    dialectOptions: {
+        ssl: {
+          require: true, // Enable SSL connection
+          rejectUnauthorized: false // For development, you may need to disable this if you're using self-signed certificates
+        }
+    }
   });
 
  const connectDatabase = async()=>{

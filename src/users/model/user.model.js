@@ -59,7 +59,7 @@ const UserModel = sequelize.define('users', {
     },
     isActive: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
     },
     password: {
       type: DataTypes.STRING,

@@ -13,7 +13,7 @@ const PORT = ServerConfig.PORT || 8082;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://document-sharing-frontend.vercel.app",
     methods:["GET","POST","DELETE","UPDATE","PUT","PATCH"],
     credentials: true,
   }));

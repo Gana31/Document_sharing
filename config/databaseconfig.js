@@ -1,10 +1,11 @@
 
-
+import pg from "pg"
 import { Sequelize } from 'sequelize';
 import ServerConfig from './ServerConfig.js';
 const sequelize = new Sequelize(ServerConfig.DB_NAME, ServerConfig.DB_USER, ServerConfig.DB_PASSWORD, {
     host: ServerConfig.DB_HOST,
     dialect: 'postgres',
+    dialectModule: pg,
     dialectOptions: {
         ssl: {
           require: true, // Enable SSL connection

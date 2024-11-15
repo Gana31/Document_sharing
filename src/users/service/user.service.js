@@ -30,13 +30,13 @@ class UserService {
         try {
             const user = await userRepository.model.scope('withPassword').findOne({ where: { email ,isActive: true } });
         
-        if (!user || !(await user.comparePassword(password))) {
-            throw new ApiError(401, 'Invalid email or password');
+        if (!user) {
+            throw new ApiError(401, 'Please Register First','Service Layer');
         }
         
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            throw new ApiError(401,'Invalid credentials' );
+            throw new ApiError(401,'Invalid credentials','Service Layer' );
           }
         const{user1,accessToken} =generateTokensAndSetCookies(user, res);
 

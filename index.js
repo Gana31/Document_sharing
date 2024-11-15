@@ -13,7 +13,7 @@ const PORT = ServerConfig.PORT || 8082;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: "https://document-sharing-frontend.vercel.app",
+    origin: ServerConfig.ORIGIN,
     methods:["GET","POST","DELETE","UPDATE","PUT","PATCH"],
     credentials: true,
   }));
@@ -22,6 +22,7 @@ app.use(cookieParser());
 app.use("/api/v1", UserRouter,CategoryRouter,ProductRouter);
 
 app.get("/", (req, res) => {
+   
     return res.json({
         success: true,
         message: 'Your server is up and running....'
@@ -35,6 +36,7 @@ const startServer = async () => {
         await connectDatabase();
 
         app.listen(PORT, () => {
+            console.log(ServerConfig.ORIGIN)
             console.log(`Server is running on port ${PORT}`);
         });
     } catch (error) {

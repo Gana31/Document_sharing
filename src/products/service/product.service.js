@@ -77,6 +77,21 @@ class ProductService {
         }
     }
 
+    async getAllProductsByUserId(userId) {
+        try {
+            const products = await productRepository.findAll({
+                where: { createdBy: userId },  // Filter by createdBy
+                include: [
+                    { model: ProductImages, as: 'images' },
+                    { model: CategoryModel, as: 'categories' }
+                ]
+            });
+            return products;
+        } catch (error) {
+            throw new ApiError(400, 'Error fetching products', error.errors);
+        }
+    }
+
     // Update a product
     async updateProduct(id, data) {
         try {

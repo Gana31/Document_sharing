@@ -39,6 +39,16 @@ class ProductController {
             throw new ApiError(400, error.message || 'Error fetching products');
         }
     });
+    getAllProductsByUserId = asyncHandler(async (req, res) => {
+        const { id } = req.params;
+        console.log(id)
+        try {
+            const products = await ProductService.getAllProductsByUserId(id);
+            res.status(200).json(new ApiResponse(200, 'Products retrieved successfully', products));
+        } catch (error) {
+            throw new ApiError(400, error.message || 'Error fetching products');
+        }
+    });
 
 
     updateProduct = asyncHandler(async (req, res) => {

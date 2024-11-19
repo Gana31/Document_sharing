@@ -10,7 +10,7 @@ class CrudRepository {
             const createdRecord = await this.model.create(data);
             return createdRecord;
         } catch (error) {
-            // console.log("from the curdddd",errrr)
+            console.log("from the curdddd",error)
             // console.log("form the curdrepostioty",error.errors[0].message)
             throw new ApiError(400, error.errors[0].message ||  error.message  || 'Error creating record',"From Base Layer",error.errors || error);
         }
@@ -22,10 +22,10 @@ class CrudRepository {
             return record;
         } catch (error) {
             console.log(error)
-            throw new ApiError(400, error.errors.message ||  error.message  || 'Error fetching record', error.errors);
+            throw new ApiError(400, error.errors[0]?.message ||  error.message  || 'Error fetching record',"From Base Layer", error.errors || error);
         }
     }
-
+  
     async findAll(options = {}) {
         try {
             const records = await this.model.findAll(options);
@@ -49,7 +49,7 @@ class CrudRepository {
             const deleted = await this.model.destroy({ where: { id } });
             return { message: 'Record deleted successfully',deleted };
         } catch (error) {
-            throw new ApiError(400, 'Error deleting record', error.errors);
+            throw new ApiError(400, error.errors[0]?.message ||  error.message  || 'Error deleting record',"From Base Layer", error.errors || error);
         }
     }
 

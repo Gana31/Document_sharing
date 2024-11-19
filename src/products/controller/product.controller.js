@@ -4,16 +4,20 @@ import ProductService from "../service/product.service.js"
 import {asyncHandler} from "../../../utils/asynchandler.js"
 class ProductController {
 
-    createProduct = asyncHandler(async (req, res) => {
+    createProduct = asyncHandler(async (req, res,next) => {
         try {
-            console.log('Request received:', req.body);
-            console.log('Uploaded files:', req.files);
             const{body,files} = req;
+            // console.log(body,files)
+            if (!body.title || !body.description || !body.price || !body.stock || !body.createdBy || !body.categories || !files ) {
+                throw new ApiError(400, 'All Fields is required', 'Controller layer');
+            }
+            
             const  { product ,images} = await ProductService.createProduct(body,files);
             res.status(201).json(new ApiResponse(201, 'Product created successfully', [product,images]));
         } catch (error) {
             // console.log(error)
-            throw new ApiError(400, error.message || 'Error creating product');
+            next( new ApiError(400, error.errors[0]?.message ||  error.message  || 'Error creating product',"From Controller Layer", error.errors || error));
+           
         }
     });
 
@@ -53,7 +57,7 @@ class ProductController {
 
     updateProduct = asyncHandler(async (req, res) => {
         try {
-            const updatedProduct = await ProductService.updateProduct(req.params.id, req.body);
+            const updatedProduct = await ProductService.updateProduct(req.params.id, req.body,req.files);
             res.status(200).json(new ApiResponse(200, 'Product updated successfully', updatedProduct));
         } catch (error) {
             throw new ApiError(400, error.message || 'Error updating product');
@@ -61,12 +65,13 @@ class ProductController {
     });
 
     // Delete Product
-    deleteProduct = asyncHandler(async (req, res) => {
+    deleteProduct = asyncHandler(async (req, res,next) => {
         try {
             const response = await ProductService.deleteProduct(req.params.id);
             res.status(200).json(new ApiResponse(200, 'Product deleted successfully', response));
         } catch (error) {
-            throw new ApiError(400, error.message || 'Error deleting product');
+            next( new ApiError(400, error.errors[0]?.message ||  error.message  || 'Error deleting record',"From Controller Layer", error.errors || error));
+            // throw new ApiError(400, error.message || 'Error deleting product');
         }
     });
 }

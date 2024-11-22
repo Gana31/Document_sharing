@@ -57,13 +57,13 @@ class ProductController {
 
     updateProduct = asyncHandler(async (req, res) => {
         try {
-            const updatedProduct = await ProductService.updateProduct(req.params.id, req.body,req.files);
+            // console.log("update proudcta",req.params.id, req.body, req.files)
+            const updatedProduct = await ProductService.updateProduct(req.params.id, req.body, req.files);
             res.status(200).json(new ApiResponse(200, 'Product updated successfully', updatedProduct));
         } catch (error) {
-            throw new ApiError(400, error.message || 'Error updating product');
+            res.status(400).json(new ApiResponse(400, error.message || 'Error updating product'));
         }
     });
-
     // Delete Product
     deleteProduct = asyncHandler(async (req, res,next) => {
         try {

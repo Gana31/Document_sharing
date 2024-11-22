@@ -7,6 +7,7 @@ import ServerConfig from './config/ServerConfig.js';
 import { UserRouter } from './src/users/index.js';
 import { CategoryRouter } from './src/category/index.js';
 import { ProductRouter } from './src/products/index.js';
+import { OrderRouter } from './src/order/index.js';
 const app = express();
 const PORT = ServerConfig.PORT || 8082;
 
@@ -19,7 +20,7 @@ app.use(cors({
   }));
 app.use(cookieParser());
 
-app.use("/api/v1", UserRouter,CategoryRouter,ProductRouter);
+app.use("/api/v1", UserRouter,CategoryRouter,ProductRouter,OrderRouter);
 
 app.get("/", (req, res) => {
    

@@ -19,6 +19,7 @@ class CrudRepository {
     async findById(id,options = {}) {
         try {
             const record = await this.model.findByPk(id,options);
+            console.log(record)
             return record;
         } catch (error) {
             console.log(error)
@@ -31,6 +32,7 @@ class CrudRepository {
             const records = await this.model.findAll(options);
             return records;
         } catch (error) {
+            console.log(error)
             throw new ApiError(400, 'Error fetching records', error.errors);
         }
     }

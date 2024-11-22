@@ -1,9 +1,9 @@
-import CrudRepository from "../../../utils/crudClass";
-
+import {OrderModel} from '../../dbrelation.js'
+import CrudRepository from '../../../utils/crudClass.js'
 
 class OrderRepository extends CrudRepository{
    constructor(){
-        super(CategoryModel)
+        super(OrderModel)
    }
 
  

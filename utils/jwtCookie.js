@@ -19,12 +19,16 @@ export const generateTokensAndSetCookies = (user1, res) => {
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    maxAge: parseDuration(ServerConfig.ACCESS_TOKEN_EXPIRY) || 24 * 60 * 60 * 1000, // Default to 1 day
+    maxAge: parseDuration(ServerConfig.ACCESS_TOKEN_EXPIRY) || 24 * 60 * 60 * 1000, 
+    sameSite: 'none',
+    secure:  ServerConfig.NODE_ENV == 'production',
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     maxAge: parseDuration(ServerConfig.REFRESH_TOKEN_EXPIRY) || 7 * 24 * 60 * 60 * 1000, // Default to 7 days
+    sameSite: 'none',
+    secure:  ServerConfig.NODE_ENV == 'production',
   });
   console.log("form the jwtcookeis",user1)
   return {user1,accessToken} 

@@ -71,8 +71,10 @@ const deleteUser = asyncHandler(async(req,res,next)=>{
 
 const Logout = asyncHandler(async(req,res,next)=>{
     try {
-       
-        res.status(200).json(new ApiResponse(201,"user delete Successful",result));
+     
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
+        res.status(200).json(new ApiResponse(200,"user Logout Successful"));
     } catch (error) {
         next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Logouting the user","From Controler layer", error.errors || error));
     }

@@ -20,13 +20,14 @@ class CategoryRepository extends CrudRepository{
           });
 
           if (!category) {
-              throw new ApiError(404, `Category with name ${categoryName} not found`);
+
+              throw new ApiError(404, `Category with name ${categoryName} not found`, "from the Repository layer");
           }
 
           return category.products || []; 
       } catch (error) {
          console.log(error)
-          throw new ApiError(400, error.message || 'Error fetching products by category name');
+         throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error fetching products by category name', "from the Repository layer",error.errors || error );
       }
   }
 
@@ -42,13 +43,13 @@ class CategoryRepository extends CrudRepository{
           });
 
           if (!category) {
-              throw new ApiError(404, `Category with ID ${categoryId} not found`);
+              throw new ApiError(404, `Category with ID ${categoryId} not found`, "from the Repository layer");
           }
 
           return category.products || []; 
       } catch (error) {
         console.log(error)
-          throw new ApiError(400, 'Error fetching products by category ID', error.errors);
+        throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error fetching products by category ID', "from the Repository layer",error.errors || error );
       }
   }
 }

@@ -50,7 +50,7 @@ class ProductService {
         } catch (error) {
             await transaction.rollback();
 
-            console.log("Error during product creation process:", error);
+            // console.log("Error during product creation process:", error);
             throw new ApiError(400, error.errors[0]?.message || error.message || 'Error creating product', 'Service Layer', error.errors || error);
         }
     }
@@ -68,7 +68,7 @@ class ProductService {
             }
             return product;
         } catch (error) {
-            throw new ApiError(400, error.errors[0]?.message || error.message ||'Error fetching product', 'Service Layer', error.errors || error);
+            throw new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching product', 'Service Layer', error.errors || error);
         }
     }
 
@@ -83,7 +83,22 @@ class ProductService {
             });
             return products;
         } catch (error) {
-            throw new ApiError(400, 'Error fetching products', error.errors);
+            throw new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching products', 'Service Layer', error.errors || error);
+
+        }
+    }
+
+    async getAllProductsList() {
+        try {
+            const products = await productRepository.findAll({
+                include: [
+                    { model: ProductImages, as: 'images' },
+                    { model: CategoryModel, as: 'categories' }
+                ]
+            });
+            return products;
+        } catch (error) {
+            throw new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching products', 'Service Layer', error.errors || error);
         }
     }
 
@@ -98,8 +113,7 @@ class ProductService {
             });
             return products;
         } catch (error) {
-            throw new ApiError(400, 'Error fetching products', error.errors);
-            
+            throw new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching products', 'Service Layer', error.errors || error);
         }
     }
 
@@ -197,7 +211,7 @@ class ProductService {
 
         } catch (error) {
             await transaction.rollback();
-            console.error("Error during product update:", error);
+
             throw new ApiError(400, error.errors[0]?.message || error.message || ' Error updating product form service layer', 'Service Layer', error.errors || error);
         }
     }

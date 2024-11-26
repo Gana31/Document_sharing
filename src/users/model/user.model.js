@@ -10,12 +10,12 @@ const validateEmail = (email) => {
 
 const random_profile = () => {
   const img_urls = [
-    "https://cdn2.iconfinder.com/data/icons/avatars-60/5985/2-Boy-512.png",
-    "https://cdn2.iconfinder.com/data/icons/avatars-60/5985/4-Writer-1024.png",
-    "https://cdn2.iconfinder.com/data/icons/avatars-60/5985/40-School_boy-512.png",
-    "https://cdn2.iconfinder.com/data/icons/avatars-60/5985/12-Delivery_Man-128.png",
-    "https://cdn1.iconfinder.com/data/icons/user-pictures/100/boy-512.png",
-  ];
+    "https://res.cloudinary.com/dnyhn7loo/image/upload/v1732534321/profile_images/g1xzno2gegyixplrqky2.webp",
+    "https://res.cloudinary.com/dnyhn7loo/image/upload/v1732534320/profile_images/xyrs8o9vgo8qjhz1dlaw.webp",
+    "https://res.cloudinary.com/dnyhn7loo/image/upload/v1732534320/profile_images/lhwlf42g7q5wzqafrkfu.webp",
+    "https://res.cloudinary.com/dnyhn7loo/image/upload/v1732534320/profile_images/mzsr5qkbppzbix9xl89w.webp",
+    "https://res.cloudinary.com/dnyhn7loo/image/upload/v1732534320/profile_images/kpt4t3bkjkvi63gtaduy.webp"
+  ]
   const idx = Math.floor(Math.random() * img_urls.length);
   return img_urls[idx];
 };

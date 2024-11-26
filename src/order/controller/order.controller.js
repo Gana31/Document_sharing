@@ -9,7 +9,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
         // console.log("Create order call");
         const { userId, products, frontendTotal } = req.body;
         if (!userId || !products || !frontendTotal) {
-            throw new ApiError(400, "All fields are required");
+            throw new ApiError(400, "All fields are required","Controller Layer");
         }
         const order = await orderService.createOrder(userId, products, frontendTotal);
         res.status(201).json(new ApiResponse(201, "Order created successfully", order));
@@ -24,14 +24,14 @@ export const getPreviousOrders = asyncHandler(async (req, res, next) => {
         const { id } = req.params;
         // console.log(id)
         if (!id) {
-            throw new ApiError(400, "User ID is required");
+            throw new ApiError(400, "User ID is required","Controller Layer");
         }
 
         const previousOrders = await orderService.getPreviousOrders(id);
         
         // If no orders found
         if (!previousOrders || previousOrders.length === 0) {
-            throw new ApiError(404, "No previous orders found for this user");
+            throw new ApiError(404, "No previous orders found for this user","Controller Layer");
         }
 
         res.status(200).json(new ApiResponse(200, "Previous orders fetched successfully", previousOrders));

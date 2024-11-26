@@ -36,11 +36,14 @@ class UserService {
         
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            throw new ApiError(401,'Invalid credentials','Service Layer' );
+            throw new ApiError(401,'Invalid Password credentials','Service Layer' );
           }
-        const{user1,accessToken} =generateTokensAndSetCookies(user, res);
+        const{user1} =generateTokensAndSetCookies(user, res);
+        const user2 = user1.toJSON();
+        delete user2.password;
+        console.log(user2)
 
-        return { user1, accessToken};
+        return { user2};
         } catch (error) {
             // console.log(error)
             throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error Login user', 'Error Login user form service layer',error.errors || error);
@@ -51,18 +54,18 @@ class UserService {
         try {
             const userToUpdate = await userRepository.findById(id);
             if (!userToUpdate) {
-                throw new ApiError(404, 'User not found');
+                throw new ApiError(404, 'User not found', 'Service Layer');
             }
             if (data.email && data.email !== userToUpdate.email) {
-                throw new ApiError(403, 'Email cannot be changed');
+                throw new ApiError(403, 'Email cannot be changed', 'Service Layer');
             }
             if (data.account_type && currentUser.role !== 'admin') {
-                throw new ApiError(403, 'Only admins can change account type');
+                throw new ApiError(403, 'Only admins can change account type', 'Service Layer');
             }
             const updatedUser = await userRepository.update(id, data);
             return updatedUser;
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error updating user',"from service Layer" ,error.errors || error);
         }
     }
@@ -75,6 +78,31 @@ class UserService {
             throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error deleting user', "from the servie layer",error.errors || error );
         }
     }
+
+    async getUserDetails(id) {
+        try {
+          const user = await userRepository.findById(id,{
+            where: { id, isActive: true }, 
+            attributes: [
+              'name', 
+              'email', 
+              'address', 
+              'mobile_no', 
+              'gender', 
+              'country', 
+              'avatar'
+            ], // Include only the specified fields
+          });
+          
+          if (!user) {
+            throw new ApiError(404, 'User not found', 'Service Layer');
+          }
+      
+          return user;
+        } catch (error) {
+            throw new ApiError(400, error.errors[0]?.message || error?.message || 'Error getiing user details', "from the servie layer",error.errors || error );
+        }
+      }
 }
 
 export default new UserService();

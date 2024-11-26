@@ -16,9 +16,18 @@ const CategoryModel = sequelize.define('Category', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  createdby: {
+    type: DataTypes.UUID, 
+    allowNull: false, 
+    references: {
+      model: 'users', 
+      key: 'id', 
+    },
+    onDelete: 'CASCADE',
+  },
 }, {
   tableName: 'categories',
-  timestamps: true,
+  timestamps: true, 
 });
 
 export default CategoryModel;

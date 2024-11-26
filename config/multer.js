@@ -8,8 +8,6 @@ cloudinaryV2.config({
     api_key: ServerConfig.CLOUDINARY_API_KEY,
     api_secret: ServerConfig.CLOUDINARY_API_SECRET,
 });
-
-
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {

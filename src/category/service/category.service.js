@@ -8,11 +8,12 @@ const categoryRepository = new CategoryRepository();
     class CategoryService {
         async createCategory(data) {
             try {
-                const { name, description } = data;
-                const category = await categoryRepository.create({ name, description });
+                const { name, description,userId } = data;
+                const category = await categoryRepository.create({ name, description ,createdby:userId});
                 return category;
             } catch (error) {
-                throw new ApiError(400, error.message || 'Error creating category');
+                // console.log(error)
+                throw new ApiError(400, error.errors[0]?.message || error.message || 'Error creating category', 'Service Layer', error.errors || error);
             }
         }
     
@@ -21,7 +22,7 @@ const categoryRepository = new CategoryRepository();
                 const categories = await categoryRepository.findAll();
                 return categories;
             } catch (error) {
-                throw new ApiError(400, error.message || 'Error retrieving categories');
+                throw new ApiError(400, error.errors[0]?.message || error.message ||  'Error retrieving categories', 'Service Layer', error.errors || error)
             }
         }
     
@@ -29,35 +30,65 @@ const categoryRepository = new CategoryRepository();
             try {
                 const category = await categoryRepository.findById(id);
                 if (!category) {
-                    throw new ApiError(404, 'Category not found');
+                    throw new ApiError(404, 'Category not found', 'Service Layer');
                 }
                 return category;
             } catch (error) {
-                throw new ApiError(404, error.message || 'Error retrieving category');
+                throw new ApiError(400, error.errors[0]?.message || error.message ||  'Error retrieving category', 'Service Layer', error.errors || error)
             }
         }
-    
+        
+        async getCategoriesByUserId(userId) {
+            try {
+                const categories = await categoryRepository.findAll({
+                    where: { createdby: userId }, 
+                });
+                return categories;
+            } catch (error) {
+                throw new ApiError(400, error.errors[0]?.message || error.message ||'Error fetching categories by user ID', 'Service Layer', error.errors || error)
+            }
+        }
+
         async updateCategory(id, data) {
             try {
-                const updatedCategory = await categoryRepository.update(id, data);
-                if (!updatedCategory) {
-                    throw new ApiError(404, 'Category not found');
+
+                const category = await categoryRepository.findById(id);
+        
+                if (!category) {
+                    throw new ApiError(404, 'Category not found', 'Service Layer');
                 }
+        
+                if (category.createdby !== data.userId) {
+                    throw new ApiError(403, 'You are not authorized to update this category', 'Service Layer');
+                }
+        
+                const updatedCategory = await categoryRepository.update(id, data);
                 return updatedCategory;
             } catch (error) {
-                throw new ApiError(400, error.message || 'Error updating category');
+                // console.log(error)
+                throw new ApiError(400, error.errors[0]?.message || error.message || 'Error updating category', 'Service Layer', error.errors || error)
             }
         }
     
-        async deleteCategory(id) {
+        async deleteCategory(id,userId) {
             try {
+                const category = await categoryRepository.findById(id);
+        
+                if (!category) {
+                    throw new ApiError(404, 'Category not found', 'Service Layer');
+                }
+        
+                if (category.createdby !== userId) {
+                    throw new ApiError(403, 'You are not authorized to update this category', 'Service Layer');
+                }
+        
                 const response = await categoryRepository.delete(id);
                 if (!response) {
-                    throw new ApiError(404, 'Category not found');
+                    throw new ApiError(404, 'Category not found', 'Service Layer');
                 }
                 return { message: 'Category deleted successfully' };
             } catch (error) {
-                throw new ApiError(400, error.message || 'Error deleting category');
+                throw new ApiError(400, error.errors[0]?.message || error.message ||  'Error deleting category', 'Service Layer', error.errors || error)
             }
         }
 
@@ -67,7 +98,7 @@ const categoryRepository = new CategoryRepository();
                 return products;
             } catch (error) {
                 // console.log(error)
-                throw new ApiError(400, error.message || 'Error fetching products by category name');
+                throw new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching products by category name', 'Service Layer', error.errors || error)
             }
         }
     
@@ -76,7 +107,7 @@ const categoryRepository = new CategoryRepository();
                 const products = await categoryRepository.getProductsByCategoryId(categoryId);
                 return products;
             } catch (error) {
-                throw new ApiError(400, error.message || 'Error fetching products by category ID');
+                throw new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching products by category ID', 'Service Layer', error.errors || error)
             }
         }
     }

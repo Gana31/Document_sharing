@@ -31,7 +31,7 @@ export const getPreviousOrders = asyncHandler(async (req, res, next) => {
         
         // If no orders found
         if (!previousOrders || previousOrders.length === 0) {
-            throw new ApiError(404, "No previous orders found for this user","Controller Layer");
+            res.status(200).json(new ApiResponse(200,"No previous orders found for this user"));
         }
 
         res.status(200).json(new ApiResponse(200, "Previous orders fetched successfully", previousOrders));

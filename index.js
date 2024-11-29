@@ -8,6 +8,7 @@ import { UserRouter } from './src/users/index.js';
 import { CategoryRouter } from './src/category/index.js';
 import { ProductRouter } from './src/products/index.js';
 import { OrderRouter } from './src/order/index.js';
+import { ContactRouter } from './src/Contactus/index.js';
 const app = express();
 const PORT = ServerConfig.PORT || 8082;
 
@@ -20,7 +21,7 @@ app.use(cors({
   }));
 app.use(cookieParser());
 
-app.use("/api/v1", UserRouter,CategoryRouter,ProductRouter,OrderRouter);
+app.use("/api/v1", UserRouter,CategoryRouter,ProductRouter,OrderRouter,ContactRouter);
 
 app.get("/", (req, res) => {
    

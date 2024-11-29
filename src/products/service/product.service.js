@@ -2,7 +2,7 @@ import { ApiError } from "../../../utils/ApiError.js";
 import ProductRepository from "../repository/product.repository.js";
 import { ProductCategory, ProductImages } from "../index.js";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../../config/multer.js";
-import { CategoryModel } from "../../dbrelation.js";
+import { CategoryModel, ProductFeatures } from "../../dbrelation.js";
 import { Op } from 'sequelize';
 const productRepository = new ProductRepository();
 
@@ -17,7 +17,13 @@ class ProductService {
             if (!createdProduct.id) {
                 throw new ApiError(400, 'Product creation failed, no ID returned.', "service layer");
             }
-
+            const features = data.features || []; 
+            const featureRecords = features.map((feature) => ({
+              productId: createdProduct.id,
+              feature,
+            }));
+            await ProductFeatures.bulkCreate(featureRecords, { transaction });
+            
             const categories = Array.isArray(data.categories) ? data.categories : [data.categories];
 
             if (categories.length > 0) {
@@ -60,7 +66,8 @@ class ProductService {
             const product = await productRepository.findById(id, {
                 include: [
                     { model: ProductImages, as: 'images' },
-                    { model: CategoryModel, as: 'categories' }
+                    { model: CategoryModel, as: 'categories' },
+                    { model: ProductFeatures, as: 'features' }, 
                 ]
             });
             if (!product) {
@@ -78,7 +85,8 @@ class ProductService {
             const products = await productRepository.findAll({
                 include: [
                     { model: ProductImages, as: 'images' },
-                    { model: CategoryModel, as: 'categories' }
+                    { model: CategoryModel, as: 'categories' },
+                    { model: ProductFeatures, as: 'features' }, 
                 ]
             });
             return products;
@@ -93,7 +101,8 @@ class ProductService {
             const products = await productRepository.findAll({
                 include: [
                     { model: ProductImages, as: 'images' },
-                    { model: CategoryModel, as: 'categories' }
+                    { model: CategoryModel, as: 'categories' },
+                    { model: ProductFeatures, as: 'features' }, 
                 ]
             });
             return products;
@@ -108,7 +117,8 @@ class ProductService {
                 where: { createdBy: userId },  // Filter by createdBy
                 include: [
                     { model: ProductImages, as: 'images' },
-                    { model: CategoryModel, as: 'categories' }
+                    { model: CategoryModel, as: 'categories' },
+                    { model: ProductFeatures, as: 'features' }, 
                 ]
             });
             return products;
@@ -123,11 +133,12 @@ class ProductService {
             const product = await productRepository.findById(id, {
                 include: [
                     { model: ProductImages, as: 'images' },
-                    { model: CategoryModel, as: 'categories' }
+                    { model: CategoryModel, as: 'categories' },
+                    { model: ProductFeatures, as: 'features' }, 
+                    
                 ],
                 transaction
             });
-
             if (!product) {
                 throw new ApiError(404, 'Product not found', 'Service Layer');
             }
@@ -157,7 +168,33 @@ class ProductService {
                 }));
                 await ProductCategory.bulkCreate(newAssociations, { transaction });
             }
+            
+                 // Updating features
+      if(product.features.length > 0){
+        const oldFeatures = product.features.map(feature => feature.feature); // Get existing features
+        const newFeatures = Array.isArray(data.features) ? data.features : [data.features];
 
+        // Find features to remove
+        const featuresToRemove = product.features.filter(feature => !newFeatures.includes(feature.feature));
+        if (featuresToRemove.length > 0) {
+            const featureIdsToRemove = featuresToRemove.map(feature => feature.id);
+            await ProductFeatures.destroy({
+                where: { id: { [Op.in]: featureIdsToRemove } },
+                transaction
+            });
+        }
+
+        // Find features to add
+        const featuresToAdd = newFeatures.filter(feature => !oldFeatures.includes(feature));
+        if (featuresToAdd.length > 0) {
+            const newFeatureRecords = featuresToAdd.map(feature => ({
+                productId: id,
+                feature
+            }));
+            await ProductFeatures.bulkCreate(newFeatureRecords, { transaction });
+        }
+
+      }
             const dataImages = Array.isArray(data.images) ? data.images : (data.images ? [data.images] : []);
             const dataImageIds = dataImages.map(image => {
                 const imagee = JSON.parse(image); 
@@ -224,7 +261,9 @@ class ProductService {
             const product = await productRepository.findById(id, {
                 include: [
                     { model: ProductImages, as: 'images' },
-                    { model: CategoryModel, as: 'categories' }
+                    { model: CategoryModel, as: 'categories' },
+                    { model: ProductFeatures, as: 'features' }, 
+                    
                 ]
             });
 

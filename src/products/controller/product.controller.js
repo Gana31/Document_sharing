@@ -7,8 +7,6 @@ class ProductController {
     createProduct = asyncHandler(async (req, res,next) => {
         try {
             const{body,files} = req;
-            // console.log(body,files)
-            console.log(body,files);
             if (!body.title || !body.description || !body.price || !body.stock|| !body.categories || !files ) {
                 throw new ApiError(400, 'All Fields is required', 'Controller layer');
             }

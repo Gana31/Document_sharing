@@ -23,7 +23,7 @@ const ProductModel = sequelize.define('Product', {
   },
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   createdBy: {
     type: DataTypes.UUID,
@@ -40,6 +40,11 @@ const ProductModel = sequelize.define('Product', {
   status: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  access_mode: {
+    type: DataTypes.ENUM('offline', 'online'),  
+    allowNull: false,  
+    defaultValue: 'offline', 
   },
   createdAt: {
     type: DataTypes.DATE,

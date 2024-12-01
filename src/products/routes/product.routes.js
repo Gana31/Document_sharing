@@ -8,6 +8,7 @@ const ProductRouter  = express.Router()
 
 ProductRouter.post("/createproduct",authMiddleware,upload,productController.createProduct);
 ProductRouter.get("/getallproduct",productController.getAllProducts);
+ProductRouter.get("/getproductbyname",productController.getProductsByName);
 ProductRouter.get("/getproductbyid/:id",productController.getProductById);
 ProductRouter.put("/updateproduct/:id",authMiddleware,upload,productController.updateProduct);
 ProductRouter.delete("/deleteproduct/:id",authMiddleware,productController.deleteProduct);

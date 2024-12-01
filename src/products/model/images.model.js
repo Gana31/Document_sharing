@@ -27,6 +27,11 @@ const ProductImages = sequelize.define('ProductImages', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    modeltype: {
+      type: DataTypes.ENUM('pdf', 'image'),
+      allowNull: false,
+      defaultValue: 'image', 
+    },
   } ,{
     tableName: 'product_images',
     timestamps: true,

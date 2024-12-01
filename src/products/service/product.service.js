@@ -342,6 +342,21 @@ class ProductService {
                     { transaction }
                 );
             }
+            const currentAccessMode = product.access_mode;  // Assuming `access_mode` is a field in the product table
+        const newAccessMode = data.access_mode;
+
+        // If access_mode has changed and is set to 'offline', delete the existing PDF
+        if (newAccessMode && newAccessMode !== currentAccessMode && newAccessMode === 'offline') {
+            const dbDocument = product.images.find(img => img.modeltype === 'pdf');
+            
+            if (dbDocument) {
+                // Delete the document from Cloudinary
+                await deleteFromCloudinary(dbDocument.cloudinaryId);
+                // Remove the document from the database
+                await ProductImages.destroy({ where: { id: dbDocument.id }, transaction });
+            }
+        }
+
 
             // Update the product data excluding images and categories
             const updatedData = { ...data };

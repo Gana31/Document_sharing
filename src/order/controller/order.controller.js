@@ -39,3 +39,15 @@ export const getPreviousOrders = asyncHandler(async (req, res, next) => {
         next(new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching previous orders', 'Controller Layer', error.errors || error));
     }
 });
+
+export const verifyPayment = asyncHandler(async (req, res, next) => {
+    try {
+        const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+        const data = await orderService.verifyPayment(razorpayOrderId, razorpayPaymentId, razorpaySignature);
+
+        res.status(200).json(new ApiResponse(200, " orders verify successfully", data));
+    } catch (error) {
+        next(new ApiError(400, error.errors[0]?.message || error.message || 'Error fetching previous orders', 'Controller Layer', error.errors || error));
+    }
+});
+

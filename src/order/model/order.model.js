@@ -25,6 +25,14 @@ const OrderModel = sequelize.define('Order', {
   orderDate: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+  },
+  razorpayorderid: {
+    type: DataTypes.STRING,  // Razorpay order ID is typically a string
+    unique: true,  // Ensure that the Razorpay order ID is unique
+  },
+  paymentstatus:{
+    type: DataTypes.STRING,
+    defaultValue:"UnPaid"
   }
 }, {
   tableName: 'orders',

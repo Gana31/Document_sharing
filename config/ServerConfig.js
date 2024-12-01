@@ -17,6 +17,8 @@ const config ={
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     NODE_ENV:process.env.NODE_ENV,
+    RAZORPAY_SECRET:process.env.RAZORPAY_SECRET,
+    RAZORPAY_KEY:process.env.RAZORPAY_KEY,
 }
 
 export default Object.freeze(config);

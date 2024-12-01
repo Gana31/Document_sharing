@@ -124,7 +124,7 @@ class OrderService {
         }
     
         // Step 4: Update the order status to "Paid"
-        await order.update({ paymentStatus: "Paid" });
+        await order.update({ paymentstatus: "Paid" });
     
         return { message: "Payment verified successfully", orderId: order.id };
       } catch (error) {
@@ -144,7 +144,7 @@ class OrderService {
       // Fetch orders for the user, include related models
       const orders1 = await orderRepository.findAll({
         where: { userId ,
-          paymentstatus: 'Paid',
+         
         },
         include: [
           {

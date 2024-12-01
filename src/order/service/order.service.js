@@ -144,7 +144,7 @@ class OrderService {
       // Fetch orders for the user, include related models
       const orders1 = await orderRepository.findAll({
         where: { userId ,
-         
+          paymentstatus: 'Paid',
         },
         include: [
           {

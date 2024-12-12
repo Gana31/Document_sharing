@@ -26,7 +26,7 @@ const userlogin = asyncHandler(async(req,res,next)=>{
             throw new ApiError(400,"all Fields are required","Controller Layer")
         }
         const result = await userService.loginUser(email, password,res);
-        res.status(200).json(new ApiResponse(201,"user Login Successful",result));
+        res.status(200).json(new ApiResponse(201,"user Login Successful",...result));
     } catch (error) {
         //  console.log("Error Form login api",error.message)
         next( new ApiError(400, error.errors[0]?.message || error?.message || "Error while Login the user","From Controler layer", error.errors || error));
